@@ -3,8 +3,10 @@ simple demo for connecting jenkins to anchore enterprise
 For a Freestyle job, I have the following build steps:
 
 1) Execute Shell
+'''
 docker build -t docker.io/pvnovarese/freestyle_demo:${BUILD_ID} .
 echo "docker.io/pvnovarese/freestyle_demo:${BUILD_ID} Dockerfile" > anchore_images
+'''
 
 2) Execute Docker Command (via docker-build-step plugin)
 Docker command: Push image
