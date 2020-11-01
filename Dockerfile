@@ -8,8 +8,8 @@ FROM alpine:latest
 # HEALTHCHECK CMD /bin/true
 
 # BAD dockerfile
-#EXPOSE 22
-#RUN apk add curl
+EXPOSE 22
+RUN apk add curl
 
 
 CMD /bin/sh
