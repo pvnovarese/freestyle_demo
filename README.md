@@ -1,26 +1,44 @@
 simple demo for connecting jenkins to anchore enterprise 
 
-You'll need the Anchore plugin and the Docker Build Step plugin
+Assumptions: 
+* you've already got Anchore up and running
+* you already have the Anchore Scanner plugin configured
+* you've already got Jenkins configured to build docker images
+* you have a stored credential with your Docker Hub username/password (or whatever registry you will be pushing your images to)
 
-Assumptions: you've already got Anchore up and running and you've already got Jenkins configured to build docker images and talk to Anchore via the plugin. 
+For a Freestyle job, you'll need to configure your job as follows:
 
-For a Freestyle job, I have the following build steps:
+1) Source Code Management
+* git
+* repository URL: https://github.com/pvnovarese/freestyle_demo (or whatever you cloned this to)
+
+2) Build Environment
+* Use secret text(s) or file(s) (YES)
+* ADD "username and password (separated)"
+* Username Variable: HUB_USER
+* Password Variable: HUB_PASS
+* Credentials: your stored credential ID
+
+
+I have the following build steps:
 
 1) Execute Shell
 ```
-docker build -t docker.io/pvnovarese/freestyle_demo:${BUILD_ID} .
-echo "docker.io/pvnovarese/freestyle_demo:${BUILD_ID} Dockerfile" > anchore_images
+# change REGISTRY to whatever Docker v2-compatible registry you want 
+export REGISTRY=docker.io
+# save registry so we can use it again later
+echo ${REGISTRY} > .registry_name
+# docker login
+docker login -u ${HUB_USER} -p ${HUB_PASS} ${REGISTRY}
+# build image to be tested with build ID as tag
+docker build -t ${REGISTRY}/${HUB_USER}/freestyle_demo:${BUILD_ID} .
+# construct the anchore_images file the plugin reads to know what to scan
+echo ${REGISTRY}"/${HUB_USER}/freestyle_demo:${BUILD_ID} Dockerfile" > anchore_images
+# push test image
+docker push ${REGISTRY}/${HUB_USER}/freestyle_demo:${BUILD_ID}
 ```
 
-2) Execute Docker Command (via docker-build-step plugin)
-* Docker command: Push image
-* Name of the image to push (repository/image): pvnovarese/freestyle_demo
-* Tag: $BUILD_ID
-* Registry: docker.io
-* Docker registry URL: docker.io
-* Registry credentials: (credential ID for docker hub user/pass)
-
-3) Anchore Container Image Scanner (via anchore plugin)
+2) Anchore Container Image Scanner (via anchore plugin)
 * Image list file: anchore_images
 * Fail build on policy evaluation FAIL result: (YES)
 * Fail build on critical plugin error: (YES)
@@ -30,16 +48,12 @@ echo "docker.io/pvnovarese/freestyle_demo:${BUILD_ID} Dockerfile" > anchore_imag
 * Anchore Engine auto-subscribe tag updates: (YES)
 * Anchore Engine force image analysis: (YES - necessary if passing Dockerfile to analyzer)
 
-4) Execute Docker Command
-* Tag image
-* Name of the image to tag (repository/image:tag): docker.io/pvnovarese/freestyle_demo:$BUILD_ID
-* Target repository of the new tag: docker.io/pvnovarese/freestyle_demo
-* The tag to set: prod
-
-5) Execute Docker Command
-* Docker command: Push image
-* Name of the image to push (repository/image): pvnovarese/freestyle_demo
-* Tag: prod
-* Registry: docker.io
-* Docker registry URL: docker.io
-* Registry credentials: (credential ID for docker hub user/pass)
+3) Execute Shell
+```
+# recover registry name from earlier
+export REGISTRY=$(cat .registry_name)
+# re-tag image as production now that it's passed our scan
+docker tag ${REGISTRY}/${HUB_USER}/freestyle_demo:${BUILD_ID} ${REGISTRY}/${HUB_USER}/freestyle_demo:prod
+# push production image
+docker push ${REGISTRY}/${HUB_USER}/freestyle_demo:prod
+```
