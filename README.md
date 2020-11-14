@@ -12,13 +12,14 @@ For a Freestyle job, you'll need to configure your job as follows:
 * git
 * repository URL: https://github.com/pvnovarese/freestyle_demo (or whatever you cloned this to)
 
+
 2) Build Environment
 * Use secret text(s) or file(s) (YES)
 * ADD "username and password (separated)"
 * Username Variable: HUB_USER
 * Password Variable: HUB_PASS
 * Credentials: your stored credential ID
-
+![Build Environment Screenshot](https://github.com/pvnovarese/freestyle_demo/blob/master/images/build_environment.png?raw=true)
 
 I have the following build steps:
 
