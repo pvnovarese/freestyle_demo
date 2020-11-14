@@ -4,6 +4,7 @@ The included Dockerfile has "bad" settings that should cause many common policie
 * no user specified, so the container will run as root (many policies prohibit privledged users)
 * curl installed in the image (this is a commonly blocklisted package)
 * port 22 exposed (this is the default ssh policy which is often blocked)
+* no HEALTHCHECK instruction (this doesn't often result in a STOP but many policies will WARN)
 
 There are "good" settings in the Dockerfile that you can replace the "bad" section with.  The idea here is that you run the image through with the bad settings, observe the failure and the feedback in the Anchore report, then "fix" the image and rescan.
 
