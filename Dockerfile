@@ -3,7 +3,7 @@ FROM alpine:latest
 
 # GOOD dockerfile
 # EXPOSE 9999
-# RUN apk add wget
+# RUN apk add bash
 # USER 65534:65534
 # HEALTHCHECK NONE
 
