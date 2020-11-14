@@ -1,5 +1,11 @@
 simple demo for connecting jenkins to anchore enterprise 
 
+Assumptions: 
+* you've already got Anchore up and running
+* you already have the Anchore Container Image Scanner Plugin configured
+* you've already got Jenkins configured to build docker images
+* you have a stored credential with your Docker Hub username/password (or whatever registry you will be pushing your images to)
+
 The included Dockerfile has "bad" settings that should cause many common policies to issue a STOP and FAIL the image:
 * no user specified, so the container will run as root (many policies prohibit privledged users)
 * curl installed in the image (this is a commonly blocklisted package)
@@ -7,12 +13,6 @@ The included Dockerfile has "bad" settings that should cause many common policie
 * no HEALTHCHECK instruction (this doesn't often result in a STOP but many policies will WARN)
 
 There are "good" settings in the Dockerfile that you can replace the "bad" section with.  The idea here is that you run the image through with the bad settings, observe the failure and the feedback in the Anchore report, then "fix" the image and rescan.
-
-Assumptions: 
-* you've already got Anchore up and running
-* you already have the Anchore Scanner plugin configured
-* you've already got Jenkins configured to build docker images
-* you have a stored credential with your Docker Hub username/password (or whatever registry you will be pushing your images to)
 
 For a Freestyle job, you'll need to configure your job as follows:
 
