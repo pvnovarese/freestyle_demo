@@ -1,5 +1,9 @@
 simple demo for connecting jenkins to anchore enterprise 
 
+You'll need the Anchore plugin and the Docker Build Step plugin
+
+Assumptions: you've already got Anchore up and running and you've already got Jenkins configured to build docker images and talk to Anchore via the plugin. 
+
 For a Freestyle job, I have the following build steps:
 
 1) Execute Shell
