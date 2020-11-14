@@ -8,12 +8,13 @@ Assumptions:
 
 For a Freestyle job, you'll need to configure your job as follows:
 
-1) Source Code Management
+1) **Source Code Management**
 * git
 * repository URL: https://github.com/pvnovarese/freestyle_demo (or whatever you cloned this to)
+![Source Code Management Screenshot](/images/scm.png)
 
 
-2) Build Environment
+2) **Build Environment**
 * Use secret text(s) or file(s) (YES)
 * ADD "username and password (separated)"
 * Username Variable: HUB_USER
@@ -23,7 +24,7 @@ For a Freestyle job, you'll need to configure your job as follows:
 
 I have the following build steps:
 
-1) Execute Shell
+1) **Execute Shell**
 ```
 # change REGISTRY to whatever Docker v2-compatible registry you want 
 export REGISTRY=docker.io
@@ -39,7 +40,7 @@ echo ${REGISTRY}"/${HUB_USER}/freestyle_demo:${BUILD_ID} Dockerfile" > anchore_i
 docker push ${REGISTRY}/${HUB_USER}/freestyle_demo:${BUILD_ID}
 ```
 
-2) Anchore Container Image Scanner (via anchore plugin)
+2) **Anchore Container Image Scanner (via anchore plugin)**
 * Image list file: anchore_images
 * Fail build on policy evaluation FAIL result: (YES)
 * Fail build on critical plugin error: (YES)
@@ -48,8 +49,9 @@ docker push ${REGISTRY}/${HUB_USER}/freestyle_demo:${BUILD_ID}
 * Anchore Engine image annotations: (none)
 * Anchore Engine auto-subscribe tag updates: (YES)
 * Anchore Engine force image analysis: (YES - necessary if passing Dockerfile to analyzer)
+![Anchore Plugin Config Screenshot](/images/anchore.png)
 
-3) Execute Shell
+3) **Execute Shell**
 ```
 # recover registry name from earlier
 export REGISTRY=$(cat .registry_name)
